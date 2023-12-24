@@ -1,16 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const signedAgreementSlice = createSlice({
-  name: "kycData",
+const kycSlice = createSlice({
+  name: "kyc",
   initialState: {
     kycData: {},
   },
   reducers: {
     setKycData: (state, action) => {
-      state.signedAgreementId = action.payload;
+      state.kycData = action.payload;
     },
   },
 });
 
-export const { setSignedAgreementId } = signedAgreementSlice.actions;
-export default signedAgreementSlice.reducer;
+export const { setKycData } = kycSlice.actions;
+export default kycSlice.reducer;

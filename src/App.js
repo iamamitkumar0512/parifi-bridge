@@ -4,6 +4,9 @@ import { createBrowserRouter } from "react-router-dom";
 import { RouterProvider } from "react-router-dom";
 import KycTosLink from "./components/KycTosLink";
 import CustomerStatus from "./components/CustomerStatus";
+import { Provider } from "react-redux";
+import store from "./utils/store";
+import AddFunds from "./components/AddFunds";
 
 const appRouter = createBrowserRouter([
   {
@@ -22,14 +25,20 @@ const appRouter = createBrowserRouter([
     path: "/userStatus",
     element: <CustomerStatus />,
   },
+  {
+    path: "/addFunds",
+    element: <AddFunds />,
+  },
 ]);
 
 function App() {
   return (
-    <div className="m-5 p-5 text-center text-3xl">
-      <h1>Parifi x Bridge</h1>
-      <RouterProvider router={appRouter} />
-    </div>
+    <Provider store={store}>
+      <div className="m-5 p-5 text-center text-3xl">
+        <h1>Parifi x Bridge</h1>
+        <RouterProvider router={appRouter} />
+      </div>
+    </Provider>
   );
 }
 

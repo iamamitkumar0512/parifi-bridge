@@ -9,7 +9,7 @@ const KycTosLink = () => {
   const iframeRef = useRef(null);
   const tos_link = state.data.tos_link;
   const kyc_link =
-    state.data.kyc_link + "?redirect-uri=https://dashboard.bridge.xyz";
+    state.data.kyc_link + `?redirect-uri=${process.env.REDIRECT_URI}`;
   console.log(state);
   const handleMessage = (event) => {
     if (event.origin === "https://dashboard.bridge.xyz") {

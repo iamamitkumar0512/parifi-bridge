@@ -5,9 +5,12 @@ import { useFormik } from "formik";
 import { useState } from "react";
 import styles from "../styles/Username.module.css";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setKycData } from "../utils/kycSlice";
 
 const Bridge = () => {
   const [data, setData] = useState();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const uuid = generateUuid();
   const formik = useFormik({
@@ -27,7 +30,7 @@ const Bridge = () => {
           {
             headers: {
               accepts: "application/json",
-              "Api-Key": "",
+              "Api-Key": process.env.API_KEY,
               "Idempotency-Key": uuid,
             },
           }
@@ -35,6 +38,7 @@ const Bridge = () => {
         console.log(response.data);
         setData(response.data);
         localStorage.setItem("kycData", JSON.stringify(response.data));
+        dispatch(setKycData(response.data));
         navigate("/kycTos", { state: { data: response.data } });
       } catch (error) {
         console.error(
