@@ -48,7 +48,7 @@ const AddBankAccount = () => {
           {
             headers: {
               accepts: "application/json",
-              "Api-Key": "sk-test-c0b80685ba650b2bf2bf5b9c69bcb1db",
+              "Api-Key": process.env.API_KEY,
               "Idempotency-Key": uuid,
             },
           }
