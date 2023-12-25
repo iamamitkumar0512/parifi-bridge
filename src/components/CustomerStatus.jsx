@@ -32,11 +32,14 @@ const CustomerStatus = () => {
   };
   const makeApiCall = async () => {
     try {
-      const response = await axios.get(`https://api.sandbox.bridge.xyz/v0/kyc_links/${kyc_link_id}`, {
-        headers: {
-          "Api-Key": process.env.API_KEY,
-        },
-      });
+      const response = await axios.get(
+        `https://api.sandbox.bridge.xyz/v0/kyc_links/${kyc_link_id}`,
+        {
+          headers: {
+            "Api-Key": process.env.REACT_APP_API_KEY,
+          },
+        }
+      );
       console.log(response.data);
       setUserData(response.data);
       dispatch(setCustomerData(response.data));

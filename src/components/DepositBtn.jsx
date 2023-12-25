@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const DepositBtn = () => {
   const navigate = useNavigate();
-  console.log(process.env.API_KEY);
+  console.log(process.env.REACT_APP_API_KEY);
   const handelOnclick = () => {
     navigate("/customerKyc");
   };

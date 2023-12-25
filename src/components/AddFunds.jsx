@@ -48,7 +48,7 @@ const AddFunds = () => {
           {
             headers: {
               accepts: "application/json",
-              "Api-Key": process.env.API_KEY,
+              "Api-Key": process.env.REACT_APP_API_KEY,
               "Idempotency-Key": uuid,
             },
           }
