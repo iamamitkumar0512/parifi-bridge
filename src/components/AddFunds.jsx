@@ -43,7 +43,7 @@ const AddFunds = () => {
       console.log(values);
       try {
         const response = await axios.post(
-          "/v0/transfers",
+          "https://api.sandbox.bridge.xyz/v0/transfers",
           { ...body_data },
           {
             headers: {

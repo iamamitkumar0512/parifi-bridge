@@ -41,7 +41,7 @@ const AddBankAccount = () => {
       console.log(data);
       try {
         const response = await axios.post(
-          `/v0/customers/${customerId}/external_accounts`,
+          `https://api.sandbox.bridge.xyz/v0/customers/${customerId}/external_accounts`,
           {
             ...data,
           },

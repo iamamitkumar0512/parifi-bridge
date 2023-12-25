@@ -32,7 +32,7 @@ const CustomerStatus = () => {
   };
   const makeApiCall = async () => {
     try {
-      const response = await axios.get(`/v0/kyc_links/${kyc_link_id}`, {
+      const response = await axios.get(`https://api.sandbox.bridge.xyz/v0/kyc_links/${kyc_link_id}`, {
         headers: {
           "Api-Key": process.env.API_KEY,
         },
