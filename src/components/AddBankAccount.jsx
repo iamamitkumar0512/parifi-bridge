@@ -14,7 +14,7 @@ const AddBankAccount = () => {
   );
   const customerData = useSelector((store) => store.customer.customerData);
   const customerId = customerData.customer_id;
-  console.log(customerId, customerData);
+  // console.log(customerId, customerData);
 
   const uuid = generateUuid();
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ const AddBankAccount = () => {
         account_owner_name: values.account_owner_name,
         active: "true",
       };
-      console.log(data);
+      // console.log(data);
       try {
         const response = await axios.post(
           `https://api.sandbox.bridge.xyz/v0/customers/${customerId}/external_accounts`,
@@ -48,12 +48,12 @@ const AddBankAccount = () => {
           {
             headers: {
               accepts: "application/json",
-              "Api-Key": process.env.API_KEY,
+              "Api-Key": process.env.REACT_APP_API_KEY,
               "Idempotency-Key": uuid,
             },
           }
         );
-        console.log(response.data);
+        // console.log(response.data);
         dispatch(setBankData(response.data));
         localStorage.setItem("bankDetails", JSON.stringify(response.data));
         dispatch(setCloseBtn());

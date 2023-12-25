@@ -9,10 +9,10 @@ import { setBankModalState } from "../utils/modalStateSlice";
 
 const CustomerStatus = () => {
   const bankData = useSelector((store) => store.bankAccount.bankData);
-  console.log(bankData);
+  // console.log(bankData);
   const kyc_data = useSelector((store) => store.kyc.kycData);
   const customerState = useSelector((store) => store.customer.customerState);
-  console.log(customerState);
+  // console.log(customerState);
   const navigate = useNavigate();
   useEffect(() => {
     dispatch(setKycData(JSON.parse(localStorage.getItem("kycData"))));
@@ -40,7 +40,7 @@ const CustomerStatus = () => {
           },
         }
       );
-      console.log(response.data);
+      // console.log(response.data);
       setUserData(response.data);
       dispatch(setCustomerData(response.data));
       localStorage.setItem("customer", JSON.stringify(response.data));

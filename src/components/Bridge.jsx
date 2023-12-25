@@ -22,7 +22,6 @@ const Bridge = () => {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
-      console.log(values);
       try {
         const response = await axios.post(
           "https://api.sandbox.bridge.xyz/v0/kyc_links",

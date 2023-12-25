@@ -10,7 +10,7 @@ import store from "../utils/store";
 const AddFunds = () => {
   const customerData = useSelector((store) => store.customer.customerData);
   const customerId = customerData.customer_id;
-  console.log(customerId, customerData);
+  // console.log(customerId, customerData);
   const uuid = generateUuid();
   const [data, setData] = useState();
   const formik = useFormik({
@@ -40,7 +40,7 @@ const AddFunds = () => {
             "0x30f06f86F107f9523f5b91A8E8AEB602b7b260BD",
         },
       };
-      console.log(values);
+      // console.log(values);
       try {
         const response = await axios.post(
           "https://api.sandbox.bridge.xyz/v0/transfers",
@@ -53,7 +53,7 @@ const AddFunds = () => {
             },
           }
         );
-        console.log(response.data);
+        // console.log(response.data);
         setData(response.data);
       } catch (error) {
         console.error(
