@@ -7,6 +7,7 @@ import CustomerStatus from "./components/CustomerStatus";
 import { Provider } from "react-redux";
 import store from "./utils/store";
 import AddFunds from "./components/AddFunds";
+import WithdrawFunds from "./components/WithdrawFunds";
 
 const appRouter = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/addFunds",
     element: <AddFunds />,
+  },
+  {
+    path: "/withdrawFunds",
+    element: <WithdrawFunds />,
   },
 ]);
 

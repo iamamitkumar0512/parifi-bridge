@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../styles/Username.module.css";
 import { Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
@@ -7,13 +7,24 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import generateUuid from "../utils/generateUuid";
 import { setBankData } from "../utils/bankSlice";
+import { requestAPI } from "../utils/connectionApi";
+import { walletAddress } from "../utils/constant";
 
 const AddBankAccount = () => {
   const bankModalState = useSelector(
     (store) => store.modalState.bankModalState
   );
-  const customerData = useSelector((store) => store.customer.customerData);
-  const customerId = customerData.customer_id;
+  const [userdata, setUserData] = useState();
+
+  const apiCall = async () => {
+    const response = await requestAPI("GET", `/user/${walletAddress}`);
+    setUserData(response.data);
+    // console.log(response.data);
+  };
+
+  useEffect(() => {
+    apiCall();
+  }, []);
   // console.log(customerId, customerData);
 
   const uuid = generateUuid();
@@ -41,7 +52,7 @@ const AddBankAccount = () => {
       // console.log(data);
       try {
         const response = await axios.post(
-          `https://api.sandbox.bridge.xyz/v0/customers/${customerId}/external_accounts`,
+          `/v0/customers/${userdata?.customerId}/external_accounts`,
           {
             ...data,
           },
@@ -54,6 +65,23 @@ const AddBankAccount = () => {
           }
         );
         // console.log(response.data);
+        try {
+          const data = {
+            status: "bank_details_added",
+            externalBankAccountId: [
+              ...userdata.externalBankAccountId,
+              response.data.id,
+            ],
+          };
+          const response1 = await requestAPI(
+            "PATCH",
+            `/user/${walletAddress}`,
+            data
+          );
+          console.log(response1);
+        } catch (error) {
+          console.log(error);
+        }
         dispatch(setBankData(response.data));
         localStorage.setItem("bankDetails", JSON.stringify(response.data));
         dispatch(setCloseBtn());

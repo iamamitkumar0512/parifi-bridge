@@ -6,27 +6,42 @@ import { useState } from "react";
 import styles from "../styles/Username.module.css";
 import { requestAPI } from "../utils/connectionApi";
 import { walletAddress } from "../utils/constant";
-import BankAccountDetails from "./BankAccountDetails";
 
-const AddFunds = () => {
+const WithdrawFunds = () => {
   const [userdata, setUserData] = useState();
+  const [bank, setBank] = useState();
   const apiCall = async () => {
     const response = await requestAPI("GET", `/user/${walletAddress}`);
-    console.log(response.data);
     setUserData(response.data);
+    try {
+      const response1 = await axios.get(
+        `/v0/customers/${response.data.customerId}/external_accounts`,
+        {
+          headers: {
+            "Api-Key": process.env.REACT_APP_API_KEY,
+          },
+        }
+      );
+      setBank(response1.data);
+      console.log(response1.data);
+    } catch (error) {
+      console.error(
+        "Error:",
+        error.response ? error.response.data.message : error.message
+      );
+    }
   };
 
   useEffect(() => {
     apiCall();
   }, []);
-  // console.log(customerId, customerData);
   const uuid = generateUuid();
   const [data, setData] = useState();
   const formik = useFormik({
     initialValues: {
-      type: "wire",
-      crrency: "usd",
       amount: "",
+      withdraw_currency: "usd",
+      bankId: "",
     },
     validateOnBlur: false,
     validateOnChange: false,
@@ -36,13 +51,14 @@ const AddFunds = () => {
         on_behalf_of: userdata.customerId,
         developer_fee: "0.5",
         source: {
-          payment_rail: values.type,
-          currency: values.currency || "usd",
+          currency: "usdc",
+          payment_rail: "arbitrum",
+          from_address: `${walletAddress}`,
         },
         destination: {
-          payment_rail: "arbitrum",
-          currency: "usdc",
-          to_address: `${walletAddress}`,
+          payment_rail: "ach",
+          currency: values.withdraw_currency || "usd",
+          external_account_id: values.bankId,
         },
       };
       // console.log(values);
@@ -58,8 +74,18 @@ const AddFunds = () => {
             },
           }
         );
-        // console.log(response.data);
+        console.log(response.data);
         setData(response.data);
+        // try{
+        //   const data = {
+        //     transactionId: response.data.id,
+        //     transactionType: "WITHDRAWAL",
+        //     transactionStatus: response.data.state,
+        //     transactionAmount: response.data.amount,
+        //     transactionDate: response.data.created_at
+        //   }
+        //   const response1 = await requestAPI("PATCH",`/user/${walletAddress}`,{...data})
+        // }
       } catch (error) {
         console.error(
           "Error:",
@@ -70,76 +96,59 @@ const AddFunds = () => {
   });
   return (
     <div className="flex flex-col justify-center justify-items-center px-[250px] bg-slate-400 p-20">
-      <h1>Deposit Funds</h1>
+      <h1>Withdraw Funds</h1>
       <div className="bg-white border-2 border-gray-300 my-20 p-6 w-[80%] justify-center">
         <form className="py-1" onSubmit={formik.handleSubmit}>
           <div className="textbox flex flex-col items-center gap-5">
-            <select
-              {...formik.getFieldProps("type")}
-              className={styles.lgtextbox}
-            >
-              <option defaultValue={"individual"}>Deposit Methoda</option>
-              <option value="wire">Wire</option>
-              <option value="ach_push">ACH PUSH</option>
-            </select>
-            <input
-              {...formik.getFieldProps("currency")}
-              className={styles.lgtextbox}
-              type="text"
-              placeholder="usd"
-            />
             <input
               {...formik.getFieldProps("amount")}
               className={styles.lgtextbox}
               type="text"
               placeholder="Amount*"
             />
-
+            <input
+              {...formik.getFieldProps("withdraw_currency")}
+              className={styles.lgtextbox}
+              type="text"
+              placeholder="usd"
+            />
+            <select
+              {...formik.getFieldProps("bankId")}
+              className={styles.lgtextbox}
+            >
+              <option value="" disabled>
+                Select bank Account
+              </option>
+              {bank?.data.map((account) => (
+                <option key={account.id} value={account.id}>
+                  {`${account.bank_name} - ${account.last_4}`}
+                </option>
+              ))}
+            </select>
             <button className={styles.btn} type="submit">
-              Deposit
+              Withdraw
             </button>
           </div>
         </form>
       </div>
       {data && (
         <div>
-          <p className="text-red-500 text-lg">
-            *Please trnasfer from one of these account only
-          </p>
-          <BankAccountDetails />
-          <h2 className="text-2xl">Kindly transfer funds to this account</h2>
-          <p className="text-lg text-start">
-            Payment Rail:{data.source_deposit_instructions.payment_rail}
-          </p>
+          <h2 className="text-2xl">Kindaly Transfer Crypto to this wallet</h2>
           <p className="text-lg text-start">
             Amount : {data.source_deposit_instructions.amount}
           </p>
           <p className="text-lg text-start">
-            currency : {data.source_deposit_instructions.currency}
+            Crytpo currency : {data.source_deposit_instructions.currency}
           </p>
           <p className="text-lg text-start">
-            Deposit message : {data.source_deposit_instructions.deposit_message}
+            From address(your wallet address):{" "}
+            {data.source_deposit_instructions.from_address}
           </p>
           <p className="text-lg text-start">
-            *Please enter this deposit message in your wire transfer
+            To address: {data.source_deposit_instructions.to_address}
           </p>
           <p className="text-lg text-start">
-            Bank Name : {data.source_deposit_instructions.bank_name}
-          </p>
-          <p className="text-lg text-start">
-            Bank Address : {data.source_deposit_instructions.bank_address}
-          </p>
-          <p className="text-lg text-start">
-            Bank Routing Number :{" "}
-            {data.source_deposit_instructions.bank_routing_number}
-          </p>
-          <p className="text-lg text-start">
-            Bank Account Number :{" "}
-            {data.source_deposit_instructions.bank_account_number}
-          </p>
-          <p className="text-lg text-start">
-            Bank Beneficiary Name :{" "}
-            {data.source_deposit_instructions.bank_beneficiary_name}
+            Payment rail : {data.source_deposit_instructions.payment_rail}
           </p>
         </div>
       )}
@@ -147,4 +156,4 @@ const AddFunds = () => {
   );
 };
 
-export default AddFunds;
+export default WithdrawFunds;

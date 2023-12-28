@@ -7,6 +7,9 @@ import styles from "../styles/Username.module.css";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setKycData } from "../utils/kycSlice";
+import { toast, Toaster } from "react-hot-toast";
+import { requestAPI } from "../utils/connectionApi";
+import { walletAddress } from "../utils/constant";
 
 const Bridge = () => {
   const [data, setData] = useState();
@@ -24,7 +27,7 @@ const Bridge = () => {
     onSubmit: async (values) => {
       try {
         const response = await axios.post(
-          "https://api.sandbox.bridge.xyz/v0/kyc_links",
+          "/v0/kyc_links",
           { ...values },
           {
             headers: {
@@ -36,6 +39,18 @@ const Bridge = () => {
         );
         console.log(response.data);
         setData(response.data);
+        try {
+          const data = {
+            walletAddress: walletAddress,
+            status: "kyc_link_genarated",
+            kycLinkId: response.data.id,
+          };
+          const response1 = await requestAPI("POST", "/user", data);
+          console.log(response1.data);
+        } catch (error) {
+          console.log(error);
+          toast.error(error.response.data.message);
+        }
         localStorage.setItem("kycData", JSON.stringify(response.data));
         dispatch(setKycData(response.data));
         navigate("/kycTos", { state: { data: response.data } });
@@ -44,12 +59,16 @@ const Bridge = () => {
           "Error:",
           error.response ? error.response.data.message : error.message
         );
+        toast.error(
+          error.response ? error.response.data.message : error.message
+        );
       }
     },
   });
 
   return (
     <div className="flex flex-col justify-center justify-items-center px-[250px] bg-slate-400 p-20">
+      <Toaster position="top-center" reverseOrder={false}></Toaster>
       <h1>Start by createing an account</h1>
       <div className="bg-white border-2 border-gray-300 my-20 p-6 w-[80%] justify-center">
         <form className="py-1" onSubmit={formik.handleSubmit}>

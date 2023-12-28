@@ -1,21 +1,61 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useRef } from "react";
+import { requestAPI } from "../utils/connectionApi";
+import { walletAddress } from "../utils/constant";
+import axios from "axios";
 
 const KycTosLink = () => {
+  const [data, setData] = useState();
   const { state } = useLocation();
   const [disabled, setDisabled] = useState(true);
   const [modal, setModal] = useState(false);
   const iframeRef = useRef(null);
-  const tos_link = state.data.tos_link;
+
+  const apiCall = async () => {
+    try {
+      const response = await requestAPI("GET", `/user/${walletAddress}`, {});
+      setData(response.data);
+      try {
+        const response1 = await axios.get(
+          `/v0/kyc_links/${response.data.kycLinkId}`,
+          {
+            headers: {
+              "Api-Key": process.env.REACT_APP_API_KEY,
+            },
+          }
+        );
+        setData(response1.data);
+      } catch (error) {
+        console.error(
+          "Error:",
+          error.response ? error.response.data.message : error.message
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (state) {
+      setData(state.data);
+    } else {
+      apiCall();
+    }
+  }, []);
+  const tos_link = data?.tos_link;
   const kyc_link =
-    state.data.kyc_link + `?redirect-uri=${process.env.REDIRECT_URI}`;
-  // console.log(state);
-  const handleMessage = (event) => {
+    data?.kyc_link + `?redirect-uri=${process.env.REACT_APP_REDIRECT_URI}`;
+  const handleMessage = async (event) => {
     if (event.origin === "https://dashboard.bridge.xyz") {
       localStorage.setItem("signedAgreementId", event.data.signedAgreementId);
       setModal(false);
       setDisabled(false);
+      const response = await requestAPI("PATCH", `/user/${walletAddress}`, {
+        status: "TOS_STATUS_ACCEPTED",
+      });
+      console.log("kyc_accepted", response);
     }
   };
   return (

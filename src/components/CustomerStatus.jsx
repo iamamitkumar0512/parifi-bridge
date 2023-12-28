@@ -1,51 +1,101 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AddBankAccount from "./AddBankAccount";
-import { useDispatch, useSelector } from "react-redux";
-import { setCustomerData, setCustomerState } from "../utils/cutsomerSlice";
-import { setKycData } from "../utils/kycSlice";
+import { useDispatch } from "react-redux";
 import { setBankModalState } from "../utils/modalStateSlice";
+import { requestAPI } from "../utils/connectionApi";
+import { walletAddress } from "../utils/constant";
+import BankAccountDetails from "./BankAccountDetails";
 
 const CustomerStatus = () => {
-  const bankData = useSelector((store) => store.bankAccount.bankData);
-  // console.log(bankData);
-  const kyc_data = useSelector((store) => store.kyc.kycData);
-  const customerState = useSelector((store) => store.customer.customerState);
-  // console.log(customerState);
-  const navigate = useNavigate();
-  useEffect(() => {
-    dispatch(setKycData(JSON.parse(localStorage.getItem("kycData"))));
-  }, []);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [userData, setUserData] = useState();
-  const kyc = JSON.parse(localStorage.getItem("kycData"));
-  const kyc_link = kyc["kyc_link"] || kyc_data["kyc_link"];
-  const kyc_link_id = kyc.id || kyc_data.id;
+  const [kycData, setKycData] = useState();
+  const [kycStatus, setKycStatus] = useState(false);
+
+  const apiCall = async () => {
+    try {
+      const response = await requestAPI("GET", `/user/${walletAddress}`, {});
+      if (response.data.kycStatus === "approved") {
+        setKycStatus(true);
+        setUserData(response.data);
+        console.log(response.data);
+        return;
+      }
+      setUserData(response.data);
+      try {
+        const response1 = await axios.get(
+          `/v0/kyc_links/${response.data.kycLinkId}`,
+          {
+            headers: {
+              "Api-Key": process.env.REACT_APP_API_KEY,
+            },
+          }
+        );
+        setKycData(response1.data);
+        if (response1.data.kyc_status === "approved") {
+          const data = {
+            customerId: response1.data.customer_id,
+            kycStatus: response1.data.kyc_status,
+            status: "kyc_status_approved",
+          };
+          try {
+            const response2 = await requestAPI(
+              "PATCH",
+              `/user/${walletAddress}`,
+              data
+            );
+            console.log(response2.data);
+            setKycStatus(true);
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    } catch (error) {
+      console.error(error);
+      navigate("/");
+    }
+  };
+
+  useEffect(() => {
+    apiCall();
+    console.log(userData);
+  }, []);
 
   const handelAddFunds = () => {
-    dispatch(
-      setBankModalState(JSON.parse(localStorage.getItem("bankDetails")))
-    );
-    dispatch(setCustomerData(JSON.parse(localStorage.getItem("customer"))));
     navigate("/addFunds");
   };
   const makeApiCall = async () => {
     try {
-      const response = await axios.get(
-        `https://api.sandbox.bridge.xyz/v0/kyc_links/${kyc_link_id}`,
-        {
-          headers: {
-            "Api-Key": process.env.REACT_APP_API_KEY,
-          },
+      const response = await axios.get(`/v0/kyc_links/${userData.kycLinkId}`, {
+        headers: {
+          "Api-Key": process.env.REACT_APP_API_KEY,
+        },
+      });
+      if (response.data.kyc_status === "approved") {
+        const data = {
+          customerId: response.data.customer_id,
+          kycStatus: response.data.kyc_status,
+          status: "kyc_status_approved",
+        };
+        try {
+          const response1 = await requestAPI(
+            "PATCH",
+            `/user/${walletAddress}`,
+            data
+          );
+          console.log(response1.data);
+        } catch (error) {
+          console.log(error);
         }
-      );
-      // console.log(response.data);
-      setUserData(response.data);
-      dispatch(setCustomerData(response.data));
-      localStorage.setItem("customer", JSON.stringify(response.data));
-      localStorage.setItem("kyc_status", response.data.kyc_status);
-      dispatch(setCustomerState(response.data.kyc_status));
+      }
+      setKycData(response.data);
+      setKycStatus(true);
     } catch (error) {
       console.error(
         "Error:",
@@ -73,8 +123,16 @@ const CustomerStatus = () => {
               To know your status you cn click on check status button
             </p>
           </div>
-          <Link to={kyc_link}>
-            <button className="border bg-green-800 w-40 py-1 rounded-lg text-gray-50 text-sm shadow-sm text-center disabled:bg-slate-600">
+          <Link
+            to={
+              kycData?.kyc_link +
+              `?redirect-uri=${process.env.REACT_APP_REDIRECT_URI}`
+            }
+          >
+            <button
+              disabled={kycStatus}
+              className="border bg-green-800 w-40 py-1 rounded-lg text-gray-50 text-sm shadow-sm text-center disabled:bg-slate-600"
+            >
               Launch Persona Again
             </button>
           </Link>
@@ -83,22 +141,24 @@ const CustomerStatus = () => {
           <h2 className="text-2xl text-start">To check your status</h2>
           <button
             onClick={handelOnclick}
+            disabled={kycStatus}
             className="border bg-green-800 w-40 py-1 rounded-lg text-gray-50 text-sm shadow-sm text-center disabled:bg-slate-600"
           >
             Check Status
           </button>
         </div>
-        {userData && (
+        {kycData && (
           <div className="m-4 p-6 text-start">
             <h2 className="p-6 text-xl">UserData</h2>
-            <p className="text-sm"> Created At: {userData.created_at}</p>
-            <p className="text-sm"> Email: {userData.email}</p>
-            <p className="text-sm">Status: {userData.kyc_status}</p>
-            <p className="text-sm">fullName: {userData.full_name}</p>
-            <p className="text-sm">Id: {userData.customer_id}</p>
+            <p className="text-sm"> Created At: {kycData.created_at}</p>
+            <p className="text-sm"> Email: {kycData.email}</p>
+            <p className="text-sm">Status: {kycData.kyc_status}</p>
+            <p className="text-sm">fullName: {kycData.full_name}</p>
+            <p className="text-sm">Id: {kycData.customer_id}</p>
           </div>
         )}
-        {customerState === "approved" && (
+        <BankAccountDetails />
+        {kycStatus && (
           <button
             onClick={() => dispatch(setBankModalState())}
             className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
@@ -107,21 +167,13 @@ const CustomerStatus = () => {
           </button>
         )}
         <AddBankAccount />
-        {bankData && (
-          <div className="m-4 p-6 text-start">
-            <h2 className="p-6 text-xl">BankData</h2>
-            <p className="text-sm"> Created At: {bankData.created_at}</p>
-            <p className="text-sm"> Bank Name: {bankData.bak_name}</p>
-            <p className="text-sm">Account Name: {bankData.account_name}</p>
-            <p className="text-sm">Owner Name: {bankData.account_owner_name}</p>
-            <p className="text-sm">Id: {bankData.id}</p>
-            <button
-              onClick={handelAddFunds}
-              className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
-            >
-              Add Funds
-            </button>
-          </div>
+        {userData?.externalBankAccountId.length && (
+          <button
+            onClick={handelAddFunds}
+            className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
+          >
+            Add Funds
+          </button>
         )}
       </div>
     </div>
