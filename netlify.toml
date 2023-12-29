@@ -2,4 +2,4 @@
   force = true
   from = "/"
   status = 200
-  to = "https://api.sandbox.bridge.xyz"
+  to = "https://api.sandbox.bridge.xyz/"

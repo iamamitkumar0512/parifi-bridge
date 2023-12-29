@@ -76,16 +76,25 @@ const WithdrawFunds = () => {
         );
         console.log(response.data);
         setData(response.data);
-        // try{
-        //   const data = {
-        //     transactionId: response.data.id,
-        //     transactionType: "WITHDRAWAL",
-        //     transactionStatus: response.data.state,
-        //     transactionAmount: response.data.amount,
-        //     transactionDate: response.data.created_at
-        //   }
-        //   const response1 = await requestAPI("PATCH",`/user/${walletAddress}`,{...data})
-        // }
+        try {
+          const data = {
+            transactionId: response.data.id,
+            transactionType: "WITHDRAWAL",
+            transactionStatus: response.data.state,
+            transactionAmount: response.data.amount,
+            transactionDate: response.data.created_at,
+          };
+          const body_data = { transaction: [...userdata.transaction, data] };
+          const response1 = await requestAPI(
+            "PATCH",
+            `/user/${walletAddress}`,
+            body_data
+          );
+          console.log(response1.data);
+          setUserData(response1.data);
+        } catch (err) {
+          console.log(err);
+        }
       } catch (error) {
         console.error(
           "Error:",

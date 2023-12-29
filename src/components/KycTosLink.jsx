@@ -53,7 +53,7 @@ const KycTosLink = () => {
       setModal(false);
       setDisabled(false);
       const response = await requestAPI("PATCH", `/user/${walletAddress}`, {
-        status: "TOS_STATUS_ACCEPTED",
+        status: "tos_status_accepted",
       });
       console.log("kyc_accepted", response);
     }

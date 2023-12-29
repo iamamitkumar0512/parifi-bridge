@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { walletAddress } from "../utils/constant";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { requestAPI } from "../utils/connectionApi";
 
@@ -29,14 +29,14 @@ const DepositBtn = () => {
   }, []);
   const handelOnclick = () => {
     if (status === "kyc_link_genarated") navigate("/kycTos");
-    else if (status === "tos_status_accepted") navigate("/kycTos");
-    else if (status === "kyc_status_approved") navigate("userStatus");
+    else if (status === "tos_status_accepted") navigate("/userStatus");
+    else if (status === "kyc_status_approved") navigate("/addFunds");
     else if (status === "bank_details_added") navigate("/addFunds");
     else navigate("/customerKyc");
   };
   const handelOnclickWithdraw = () => {
     if (status === "kyc_link_genarated") navigate("/kycTos");
-    else if (status === "tos_status_accepted") navigate("/kycTos");
+    else if (status === "tos_status_accepted") navigate("/userStatus");
     else if (status === "kyc_status_approved") navigate("/userStatus");
     else if (status === "bank_details_added") navigate("/withdrawFunds");
     else navigate("/customerKyc");
@@ -57,12 +57,11 @@ const DepositBtn = () => {
         Withdraw
       </button>
 
-      <button
-        // onClick={handelOnclickWithdraw}
-        className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
-      >
-        Transcation
-      </button>
+      <Link to="/transcation">
+        <button className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900">
+          Transcation
+        </button>
+      </Link>
     </div>
   );
 };

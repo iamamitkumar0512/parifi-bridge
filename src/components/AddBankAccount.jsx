@@ -19,7 +19,7 @@ const AddBankAccount = () => {
   const apiCall = async () => {
     const response = await requestAPI("GET", `/user/${walletAddress}`);
     setUserData(response.data);
-    // console.log(response.data);
+    console.log(response.data);
   };
 
   useEffect(() => {

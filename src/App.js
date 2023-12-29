@@ -8,6 +8,7 @@ import { Provider } from "react-redux";
 import store from "./utils/store";
 import AddFunds from "./components/AddFunds";
 import WithdrawFunds from "./components/WithdrawFunds";
+import Transcation from "./components/Transcation";
 
 const appRouter = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/withdrawFunds",
     element: <WithdrawFunds />,
+  },
+  {
+    path: "/transcation",
+    element: <Transcation />,
   },
 ]);
 
