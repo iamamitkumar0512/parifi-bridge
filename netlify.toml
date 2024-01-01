@@ -3,3 +3,9 @@
   from = "/"
   status = 200
   to = "https://api.sandbox.bridge.xyz/"
+
+
+  [[headers]]
+  for = "/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
