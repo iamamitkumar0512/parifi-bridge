@@ -34,6 +34,7 @@ const Bridge = () => {
               accepts: "application/json",
               "Api-Key": process.env.REACT_APP_API_KEY,
               "Idempotency-Key": uuid,
+              "Access-Control-Allow-Origin": true,
             },
           }
         );
