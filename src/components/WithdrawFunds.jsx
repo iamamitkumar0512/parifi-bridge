@@ -11,11 +11,11 @@ const WithdrawFunds = () => {
   const [userdata, setUserData] = useState();
   const [bank, setBank] = useState();
   const apiCall = async () => {
-    const response = await requestAPI("GET", `/user/${walletAddress}`);
+    const response = await requestAPI("GET", `/bridge-user/${walletAddress}`);
     setUserData(response.data);
     try {
       const response1 = await axios.get(
-        `/v0/customers/${response.data.customerId}/external_accounts`,
+        `/v0/customers/${response.data.bridgeCustomerId}/external_accounts`,
         {
           headers: {
             "Api-Key": process.env.REACT_APP_API_KEY,
@@ -48,7 +48,7 @@ const WithdrawFunds = () => {
     onSubmit: async (values) => {
       const body_data = {
         amount: values.amount,
-        on_behalf_of: userdata.customerId,
+        on_behalf_of: userdata.bridgeCustomerId,
         developer_fee: "0.5",
         source: {
           currency: "usdc",
@@ -78,16 +78,18 @@ const WithdrawFunds = () => {
         setData(response.data);
         try {
           const data = {
-            transactionId: response.data.id,
-            transactionType: "WITHDRAWAL",
-            transactionStatus: response.data.state,
-            transactionAmount: response.data.amount,
-            transactionDate: response.data.created_at,
+            bridgeTransactionId: response.data.id,
+            bridgeTransactionType: "OFFRAMP",
+            bridgeTransactionStatus: response.data.state,
+            bridgeTransactionAmount: response.data.amount,
+            bridgeTransactionDate: response.data.created_at,
           };
-          const body_data = { transaction: [...userdata.transaction, data] };
+          const body_data = {
+            bridgeTransaction: [...userdata.bridgeTransaction, data],
+          };
           const response1 = await requestAPI(
             "PATCH",
-            `/user/${walletAddress}`,
+            `/bridge-user/${walletAddress}`,
             body_data
           );
           console.log(response1.data);

@@ -10,10 +10,10 @@ const Transcation = () => {
 
   const apiCall = async () => {
     try {
-      const response = await requestAPI("GET", `/user/${walletAddress}`);
+      const response = await requestAPI("GET", `/bridge-user/${walletAddress}`);
       console.log(response.data);
       setUserData(response.data);
-      setTranscation(response.data.transaction);
+      setTranscation(response.data.bridgeTransaction);
     } catch (error) {
       console.log(error);
     }
@@ -27,8 +27,8 @@ const Transcation = () => {
     if (transcation) {
       console.log(transcation);
       const trans = transcation
-        .filter((item) => item.transactionStatus !== "payment_processed")
-        .map((item) => item.transactionId);
+        .filter((item) => item.bridgeTransactionStatus !== "payment_processed")
+        .map((item) => item.bridgeTransactionId);
       setTranscationId(trans);
     }
   }, [transcation]);
@@ -68,14 +68,18 @@ const Transcation = () => {
     console.log(filteredTransactions);
     const trans = transcation.map((trans) =>
       filteredTransactions.indexOf(trans) === -1
-        ? { ...trans, transactionStatus: "payment_processed" }
+        ? { ...trans, bridgeTransactionStatus: "payment_processed" }
         : trans
     );
     console.log(trans);
     try {
-      const response1 = await requestAPI("PATCH", `/user/${walletAddress}`, {
-        transaction: trans,
-      });
+      const response1 = await requestAPI(
+        "PATCH",
+        `/bridge-user/${walletAddress}`,
+        {
+          bridgeTransaction: trans,
+        }
+      );
       console.log(response1.data);
     } catch (err) {
       console.log(err);
@@ -94,8 +98,8 @@ const Transcation = () => {
           <ul>
             {transcation.map((item) => (
               <li className="text-sm" key={item.transactionId}>
-                {item.transactionDate} - {item.transactionAmount}-{" "}
-                {item.transactionType} - {item.transactionStatus}
+                {item.bridgeTransactionDate} - {item.bridgeTransactionAmount}-{" "}
+                {item.bridgeTransactionType} - {item.bridgeTransactionStatus}
               </li>
             ))}
           </ul>

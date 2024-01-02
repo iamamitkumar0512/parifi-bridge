@@ -14,11 +14,15 @@ const KycTosLink = () => {
 
   const apiCall = async () => {
     try {
-      const response = await requestAPI("GET", `/user/${walletAddress}`, {});
+      const response = await requestAPI(
+        "GET",
+        `/bridge-user/${walletAddress}`,
+        {}
+      );
       setData(response.data);
       try {
         const response1 = await axios.get(
-          `/v0/kyc_links/${response.data.kycLinkId}`,
+          `/v0/kyc_links/${response.data.brigeKycLinkId}`,
           {
             headers: {
               "Api-Key": process.env.REACT_APP_API_KEY,
@@ -52,9 +56,13 @@ const KycTosLink = () => {
       localStorage.setItem("signedAgreementId", event.data.signedAgreementId);
       setModal(false);
       setDisabled(false);
-      const response = await requestAPI("PATCH", `/user/${walletAddress}`, {
-        status: "tos_status_accepted",
-      });
+      const response = await requestAPI(
+        "PATCH",
+        `/bridge-user/${walletAddress}`,
+        {
+          status: "tos_status_accepted",
+        }
+      );
       console.log("kyc_accepted", response);
     }
   };

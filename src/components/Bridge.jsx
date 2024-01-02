@@ -43,9 +43,9 @@ const Bridge = () => {
           const data = {
             walletAddress: walletAddress,
             status: "kyc_link_genarated",
-            kycLinkId: response.data.id,
+            bridgeKycLinkId: response.data.id,
           };
-          const response1 = await requestAPI("POST", "/user", data);
+          const response1 = await requestAPI("POST", "/bridge-user", data);
           console.log(response1.data);
         } catch (error) {
           console.log(error);

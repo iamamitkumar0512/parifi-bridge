@@ -11,7 +11,7 @@ import BankAccountDetails from "./BankAccountDetails";
 const AddFunds = () => {
   const [userdata, setUserData] = useState();
   const apiCall = async () => {
-    const response = await requestAPI("GET", `/user/${walletAddress}`);
+    const response = await requestAPI("GET", `/bridge-user/${walletAddress}`);
     console.log(response.data);
     setUserData(response.data);
   };
@@ -25,7 +25,7 @@ const AddFunds = () => {
   const formik = useFormik({
     initialValues: {
       type: "wire",
-      crrency: "usd",
+      currency: "usd",
       amount: "",
     },
     validateOnBlur: false,
@@ -33,7 +33,7 @@ const AddFunds = () => {
     onSubmit: async (values) => {
       const body_data = {
         amount: values.amount,
-        on_behalf_of: userdata.customerId,
+        on_behalf_of: userdata.bridgeCustomerId,
         developer_fee: "0.5",
         source: {
           payment_rail: values.type,
@@ -62,16 +62,18 @@ const AddFunds = () => {
         setData(response.data);
         try {
           const data = {
-            transactionId: response.data.id,
-            transactionType: "DEPOSIT",
-            transactionStatus: response.data.state,
-            transactionAmount: response.data.amount,
-            transactionDate: response.data.created_at,
+            bridgeTransactionId: response.data.id,
+            bridgeTransactionType: "ONRAMP",
+            bridgeTransactionStatus: response.data.state,
+            bridgeTransactionAmount: response.data.amount,
+            bridgeTransactionDate: response.data.created_at,
           };
-          const body_data = { transaction: [...userdata.transaction, data] };
+          const body_data = {
+            bridgeTransaction: [...userdata.bridgeTransaction, data],
+          };
           const response1 = await requestAPI(
             "PATCH",
-            `/user/${walletAddress}`,
+            `/bridge-user/${walletAddress}`,
             body_data
           );
           console.log(response1.data);

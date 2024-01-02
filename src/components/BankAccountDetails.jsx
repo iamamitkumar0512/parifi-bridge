@@ -7,11 +7,11 @@ const BankAccountDetails = () => {
   const [data, setData] = useState();
   const apiCall = async () => {
     try {
-      const response = await requestAPI("GET", `/user/${walletAddress}`);
+      const response = await requestAPI("GET", `/bridge-user/${walletAddress}`);
       //   console.log(response.data);
       try {
         const response1 = await axios.get(
-          `/v0/customers/${response.data.customerId}/external_accounts`,
+          `/v0/customers/${response.data.bridgeCustomerId}/external_accounts`,
           {
             headers: {
               "Api-Key": process.env.REACT_APP_API_KEY,

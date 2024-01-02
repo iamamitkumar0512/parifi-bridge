@@ -17,7 +17,7 @@ const AddBankAccount = () => {
   const [userdata, setUserData] = useState();
 
   const apiCall = async () => {
-    const response = await requestAPI("GET", `/user/${walletAddress}`);
+    const response = await requestAPI("GET", `/bridge-user/${walletAddress}`);
     setUserData(response.data);
     console.log(response.data);
   };
@@ -52,7 +52,7 @@ const AddBankAccount = () => {
       // console.log(data);
       try {
         const response = await axios.post(
-          `/v0/customers/${userdata?.customerId}/external_accounts`,
+          `/v0/customers/${userdata.bridgeCustomerId}/external_accounts`,
           {
             ...data,
           },
@@ -68,14 +68,14 @@ const AddBankAccount = () => {
         try {
           const data = {
             status: "bank_details_added",
-            externalBankAccountId: [
-              ...userdata.externalBankAccountId,
+            bridgeExternalBankAccountId: [
+              ...userdata.bridgeExternalBankAccountId,
               response.data.id,
             ],
           };
           const response1 = await requestAPI(
             "PATCH",
-            `/user/${walletAddress}`,
+            `/bridge-user/${walletAddress}`,
             data
           );
           console.log(response1);

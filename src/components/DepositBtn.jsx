@@ -11,7 +11,11 @@ const DepositBtn = () => {
 
   const apiCall = async () => {
     try {
-      const response = await requestAPI("GET", `/user/${walletAddress}`, {});
+      const response = await requestAPI(
+        "GET",
+        `/bridge-user/${walletAddress}`,
+        {}
+      );
       if (response) {
         setData(response.data);
         setStatus(response.data?.status);

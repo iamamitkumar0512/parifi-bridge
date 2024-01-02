@@ -17,8 +17,12 @@ const CustomerStatus = () => {
 
   const apiCall = async () => {
     try {
-      const response = await requestAPI("GET", `/user/${walletAddress}`, {});
-      if (response.data.kycStatus === "approved") {
+      const response = await requestAPI(
+        "GET",
+        `/bridge-user/${walletAddress}`,
+        {}
+      );
+      if (response.data.bridgeKycStatus === "approved") {
         setKycStatus(true);
         setUserData(response.data);
         console.log(response.data);
@@ -27,7 +31,7 @@ const CustomerStatus = () => {
       setUserData(response.data);
       try {
         const response1 = await axios.get(
-          `/v0/kyc_links/${response.data.kycLinkId}`,
+          `/v0/kyc_links/${response.data.bridgeKycLinkId}`,
           {
             headers: {
               "Api-Key": process.env.REACT_APP_API_KEY,
@@ -37,14 +41,14 @@ const CustomerStatus = () => {
         setKycData(response1.data);
         if (response1.data.kyc_status === "approved") {
           const data = {
-            customerId: response1.data.customer_id,
-            kycStatus: response1.data.kyc_status,
+            bridgeCustomerId: response1.data.customer_id,
+            bridgeKycStatus: response1.data.kyc_status,
             status: "kyc_status_approved",
           };
           try {
             const response2 = await requestAPI(
               "PATCH",
-              `/user/${walletAddress}`,
+              `/bridge-user/${walletAddress}`,
               data
             );
             console.log(response2.data);
@@ -72,30 +76,33 @@ const CustomerStatus = () => {
   };
   const makeApiCall = async () => {
     try {
-      const response = await axios.get(`/v0/kyc_links/${userData.kycLinkId}`, {
-        headers: {
-          "Api-Key": process.env.REACT_APP_API_KEY,
-        },
-      });
+      const response = await axios.get(
+        `/v0/kyc_links/${userData.bridgeKycLinkId}`,
+        {
+          headers: {
+            "Api-Key": process.env.REACT_APP_API_KEY,
+          },
+        }
+      );
       if (response.data.kyc_status === "approved") {
         const data = {
-          customerId: response.data.customer_id,
-          kycStatus: response.data.kyc_status,
+          bridgeCustomerId: response.data.customer_id,
+          bridgeKycStatus: response.data.kyc_status,
           status: "kyc_status_approved",
         };
         try {
           const response1 = await requestAPI(
             "PATCH",
-            `/user/${walletAddress}`,
+            `/bridge-user/${walletAddress}`,
             data
           );
           console.log(response1.data);
+          setKycStatus(true);
         } catch (error) {
           console.log(error);
         }
       }
       setKycData(response.data);
-      setKycStatus(true);
     } catch (error) {
       console.error(
         "Error:",
@@ -161,14 +168,16 @@ const CustomerStatus = () => {
         {kycStatus && (
           <button
             onClick={() => dispatch(setBankModalState())}
-            disabled={userData.externalBankAccountId.length >= 3 ? true : false}
+            disabled={
+              userData.bridgeExternalBankAccountId.length >= 3 ? true : false
+            }
             className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900 disabled:bg-slate-600"
           >
             Add BankAccount
           </button>
         )}
         <AddBankAccount />
-        {userData?.externalBankAccountId.length && (
+        {userData?.bridgeExternalBankAccountId.length && (
           <button
             onClick={handelAddFunds}
             className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
