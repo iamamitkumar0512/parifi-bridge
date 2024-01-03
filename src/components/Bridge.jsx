@@ -27,7 +27,7 @@ const Bridge = () => {
     onSubmit: async (values) => {
       try {
         const response = await axios.post(
-          "/api/v0/kyc_links",
+          "/v0/kyc_links",
           { ...values },
           {
             headers: {
