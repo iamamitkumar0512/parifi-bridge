@@ -1,8 +1,8 @@
 [[redirects]]
   force = true
-  from = "/"
+  from = "/v0/*"
   status = 200
-  to = "https://api.sandbox.bridge.xyz/"
+  to = "https://api.sandbox.bridge.xyz/v0:splat"
 
 
   [[headers]]
