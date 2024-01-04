@@ -27,14 +27,12 @@ const Bridge = () => {
     onSubmit: async (values) => {
       try {
         const response = await axios.post(
-          "https://api.sandbox.bridge.xyz/v0/kyc_links",
+          "/api/v0/kyc_links",
           { ...values },
           {
             headers: {
-              accepts: "application/json",
               "Api-Key": process.env.REACT_APP_API_KEY,
               "Idempotency-Key": uuid,
-              "Access-Control-Allow-Origin": true,
             },
           }
         );
