@@ -50,7 +50,7 @@ const KycTosLink = () => {
   }, []);
   const tos_link = data?.tos_link;
   const kyc_link =
-    data?.kyc_link + `?redirect-uri=${process.env.REACT_APP_REDIRECT_URI}`;
+    data?.kyc_link + `&redirect-uri=${process.env.REACT_APP_REDIRECT_URI}`;
   const handleMessage = async (event) => {
     if (event.origin === "https://dashboard.bridge.xyz") {
       localStorage.setItem("signedAgreementId", event.data.signedAgreementId);

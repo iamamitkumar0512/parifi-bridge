@@ -133,7 +133,7 @@ const CustomerStatus = () => {
           <Link
             to={
               kycData?.kyc_link +
-              `?redirect-uri=${process.env.REACT_APP_REDIRECT_URI}`
+              `&redirect-uri=${process.env.REACT_APP_REDIRECT_URI}`
             }
           >
             <button
