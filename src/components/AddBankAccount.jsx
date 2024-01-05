@@ -11,6 +11,7 @@ import { requestAPI } from "../utils/connectionApi";
 import { walletAddress } from "../utils/constant";
 
 const AddBankAccount = () => {
+  const kycState = useSelector((store) => store.kyc.kycState);
   const bankModalState = useSelector(
     (store) => store.modalState.bankModalState
   );
@@ -52,13 +53,12 @@ const AddBankAccount = () => {
       // console.log(data);
       try {
         const response = await axios.post(
-          `/v0/customers/${userdata.bridgeCustomerId}/external_accounts`,
+          `/api/v0/customers/${userdata.bridgeCustomerId}/external_accounts`,
           {
             ...data,
           },
           {
             headers: {
-              accepts: "application/json",
               "Api-Key": process.env.REACT_APP_API_KEY,
               "Idempotency-Key": uuid,
             },

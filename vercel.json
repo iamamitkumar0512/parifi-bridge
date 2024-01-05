@@ -20,7 +20,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://api.sandbox.bridge.xyz/:path*"
+      "destination": "https://api.bridge.xyz/:path*"
     }
   ]
 }

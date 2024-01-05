@@ -31,7 +31,7 @@ const CustomerStatus = () => {
       setUserData(response.data);
       try {
         const response1 = await axios.get(
-          `/v0/kyc_links/${response.data.bridgeKycLinkId}`,
+          `/api/v0/kyc_links/${response.data.bridgeKycLinkId}`,
           {
             headers: {
               "Api-Key": process.env.REACT_APP_API_KEY,
@@ -77,7 +77,7 @@ const CustomerStatus = () => {
   const makeApiCall = async () => {
     try {
       const response = await axios.get(
-        `/v0/kyc_links/${userData.bridgeKycLinkId}`,
+        `/api/v0/kyc_links/${userData.bridgeKycLinkId}`,
         {
           headers: {
             "Api-Key": process.env.REACT_APP_API_KEY,
@@ -122,12 +122,12 @@ const CustomerStatus = () => {
             <h2 className="text-xl text-start">
               You will need to verify Your Identity with Persona
             </h2>
-            <p className="text-sm text-start my-2">
-              *If You have completed the process with Persona.Then you recive a
-              mail.
+            <p className="text-sm text-start my-2 text-red-600">
+              *If your status is rejected please click on launch persona and
+              start the process again.
             </p>
             <p className="text-sm text-start">
-              To know your status you cn click on check status button
+              To know your status you can click on check status button
             </p>
           </div>
           <Link
@@ -167,7 +167,9 @@ const CustomerStatus = () => {
         <BankAccountDetails />
         {kycStatus && (
           <button
-            onClick={() => dispatch(setBankModalState())}
+            onClick={() => {
+              dispatch(setBankModalState());
+            }}
             disabled={
               userData.bridgeExternalBankAccountId.length >= 3 ? true : false
             }
@@ -177,7 +179,7 @@ const CustomerStatus = () => {
           </button>
         )}
         <AddBankAccount />
-        {userData?.bridgeExternalBankAccountId.length && (
+        {kycStatus && (
           <button
             onClick={handelAddFunds}
             className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"

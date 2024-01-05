@@ -22,7 +22,7 @@ const KycTosLink = () => {
       setData(response.data);
       try {
         const response1 = await axios.get(
-          `/v0/kyc_links/${response.data.bridgeKycLinkId}`,
+          `/api/v0/kyc_links/${response.data.bridgeKycLinkId}`,
           {
             headers: {
               "Api-Key": process.env.REACT_APP_API_KEY,

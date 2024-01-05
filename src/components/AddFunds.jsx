@@ -48,11 +48,10 @@ const AddFunds = () => {
       // console.log(values);
       try {
         const response = await axios.post(
-          "/v0/transfers",
+          "/api/v0/transfers",
           { ...body_data },
           {
             headers: {
-              accepts: "application/json",
               "Api-Key": process.env.REACT_APP_API_KEY,
               "Idempotency-Key": uuid,
             },

@@ -46,7 +46,7 @@ const Transcation = () => {
     const updatedTransactions = await Promise.all(
       transcationId.map(async (transactionId) => {
         // Make an API call to check the status of each transaction
-        const response = await axios.get(`/v0/transfers/${transactionId}`, {
+        const response = await axios.get(`/api/v0/transfers/${transactionId}`, {
           headers: {
             "Api-Key": process.env.REACT_APP_API_KEY,
           },

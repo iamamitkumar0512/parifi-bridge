@@ -3,11 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 const kycSlice = createSlice({
   name: "kyc",
   initialState: {
-    kycData: {},
+    kycState: "",
   },
   reducers: {
     setKycData: (state, action) => {
-      state.kycData = action.payload;
+      state.kycState = action.payload;
     },
   },
 });

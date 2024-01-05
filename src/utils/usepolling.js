@@ -9,7 +9,7 @@ export function usePolling(transcationId, pollingInterval) {
 
   const [clearInterval] = useInterval(async () => {
     try {
-      const response = await axios.get(`/v0/transfers/${transcationId}`, {
+      const response = await axios.get(`/api/v0/transfers/${transcationId}`, {
         headers: {
           "Api-Key": process.env.REACT_APP_API_KEY,
         },

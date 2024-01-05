@@ -11,7 +11,7 @@ const BankAccountDetails = () => {
       //   console.log(response.data);
       try {
         const response1 = await axios.get(
-          `/v0/customers/${response.data.bridgeCustomerId}/external_accounts`,
+          `/api/v0/customers/${response.data.bridgeCustomerId}/external_accounts`,
           {
             headers: {
               "Api-Key": process.env.REACT_APP_API_KEY,
